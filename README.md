@@ -16,3 +16,4 @@ python 3.6, postgresql 10
 -[ ] Flask page
  
 -[ ] Search functionality
+ 

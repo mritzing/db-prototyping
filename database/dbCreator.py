@@ -1,7 +1,8 @@
 import secrets
 from psycopg2 import connect
 
-#Returns connection to database, this should only get passed to search input and search functions
+
+# Returns connection to database, this should only get passed to search input and search functions
 def connectDB():
     try:
         con = connect(dbname=secrets.pgname, user=secrets.pguser, host=secrets.pghost, password=secrets.pgpass)
@@ -10,44 +11,45 @@ def connectDB():
     return con
 
 
-
 def populateDB(conn):
     """ create tables in the PostgreSQL database"""
     commands = (
         """
-        CREATE TABLE vendors (
-            vendor_id SERIAL PRIMARY KEY,
-            vendor_name VARCHAR(255) NOT NULL
-        )
+CREATE TABLE compound (
+	compound_id SERIAL PRIMARY KEY,
+	notation TEXT
+)
+
         """,
-        """ CREATE TABLE parts (
-                part_id SERIAL PRIMARY KEY,
-                part_name VARCHAR(255) NOT NULL
-                )
-        """,
-        """
-        CREATE TABLE part_drawings (
-                part_id INTEGER PRIMARY KEY,
-                file_extension VARCHAR(5) NOT NULL,
-                drawing_data BYTEA NOT NULL,
-                FOREIGN KEY (part_id)
-                REFERENCES parts (part_id)
-                ON UPDATE CASCADE ON DELETE CASCADE
-        )
+        """ CREATE TABLE compound_info (
+	compound_id SERIAL NOT NULL,
+	name TEXT,
+	author TEXT,
+	dateCreated DATE,
+	theoretical_mass float8,
+	scientific_mass float8,
+	time_passed INT,
+	PRIMARY KEY(compound_id)
+)
         """,
         """
-        CREATE TABLE vendor_parts (
-                vendor_id INTEGER NOT NULL,
-                part_id INTEGER NOT NULL,
-                PRIMARY KEY (vendor_id , part_id),
-                FOREIGN KEY (vendor_id)
-                    REFERENCES vendors (vendor_id)
-                    ON UPDATE CASCADE ON DELETE CASCADE,
-                FOREIGN KEY (part_id)
-                    REFERENCES parts (part_id)
-                    ON UPDATE CASCADE ON DELETE CASCADE
-        )
-        """)
+CREATE TABLE storage (
+	compound_id SERIAL NOT NULL,
+	file_loc TEXT,
+	PRIMARY KEY(compound_id)
+)
+        """,
+        """
+CREATE TABLE atom_info (
+	compound_id SERIAL NOT NULL,
+	molecule_id TEXT,
+	atom_type char(2),
+	x_coord float8,
+	y_coord float8,
+	z_coord float8,
+	PRIMARY KEY(compound_id)
+)
+      """)
     try:
         cur = conn.cursor()
         # create table one by one
@@ -62,3 +64,7 @@ def populateDB(conn):
     finally:
         if conn is not None:
             conn.close()
+
+
+if __name__ == "__main__":
+    populateDB(connectDB())
