@@ -10,7 +10,7 @@ def connectDB():
         print(e)
     return con
 
-
+## creation of DB through sql language
 def populateDB(conn):
     """ create tables in the PostgreSQL database"""
     commands = (
@@ -66,5 +66,9 @@ CREATE TABLE atom_info (
             conn.close()
 
 
+### Block for sqlAlchemy functions ###
+
+
+### Main ###
 if __name__ == "__main__":
     populateDB(connectDB())
