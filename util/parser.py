@@ -77,4 +77,5 @@ if __name__ == "__main__":
     p = Parser()
     root = os.path.join(os.path.dirname(__file__),"exFiles/")
     for f in os.listdir(root):
+        print (str(f))
         p.parseFile(os.path.join(root,f))

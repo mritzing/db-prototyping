@@ -27,19 +27,19 @@ class uploadfile():
             if self.type.startswith('image'):
                 return {"name": self.name,
                         "type": self.type,
-                        "size": self.size, 
-                        "url": self.url, 
+                        "size": self.size,
+                        "url": self.url,
                         "thumbnailUrl": self.thumbnail_url,
-                        "deleteUrl": self.delete_url, 
+                        "deleteUrl": self.delete_url,
                         "deleteType": self.delete_type,}
-            
+
             # POST an normal file
             elif self.not_allowed_msg == '':
                 return {"name": self.name,
                         "type": self.type,
-                        "size": self.size, 
-                        "url": self.url, 
-                        "deleteUrl": self.delete_url, 
+                        "size": self.size,
+                        "url": self.url,
+                        "deleteUrl": self.delete_url,
                         "deleteType": self.delete_type,}
 
             # File type is not allowed
@@ -52,16 +52,16 @@ class uploadfile():
         # GET image from disk
         elif self.is_image():
             return {"name": self.name,
-                    "size": self.size, 
-                    "url": self.url, 
+                    "size": self.size,
+                    "url": self.url,
                     "thumbnailUrl": self.thumbnail_url,
-                    "deleteUrl": self.delete_url, 
+                    "deleteUrl": self.delete_url,
                     "deleteType": self.delete_type,}
-        
+
         # GET normal file from disk
         else:
             return {"name": self.name,
-                    "size": self.size, 
-                    "url": self.url, 
-                    "deleteUrl": self.delete_url, 
+                    "size": self.size,
+                    "url": self.url,
+                    "deleteUrl": self.delete_url,
                     "deleteType": self.delete_type,}
