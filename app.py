@@ -17,13 +17,6 @@ def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/static')
-def homepage():
-    return render_template("index.html")
-
-@app.route('/search/')
-def dashboard():
-    return render_template("search.html")
 
 @app.route("/upload", methods=['GET', 'POST'])
 def upload():
@@ -79,9 +72,9 @@ def gen_file_name(filename):
 
     return filename
 
-app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('static/index.html')
+    return render_template("index.html")
 
 
 if __name__ == "__main__":
