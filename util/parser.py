@@ -1,4 +1,5 @@
 from collections import Counter
+from database.dbTools import connectDB
 import os
 class Parser:
 
@@ -9,9 +10,10 @@ class Parser:
     def parseFile(self, filename):
         with open(filename, 'r') as pdbFile:
             for line in pdbFile.readlines():
-                if line.split()[0] in ("HETATM", "ATOM"):
+                if "HETAT" in line.split()[0] or "ATOM" in line.split()[0]:
                     self.parseLine(line)
         print(self.molMass())
+        self.totals.clear()
 
     # Ex lines:
     # HETATM    3  NAQ DRG     1      18.720   7.260   1.360  1.00 20.00           N
@@ -46,6 +48,17 @@ class Parser:
             notation = notation + element + str(self.totals[element])
         return [notation,totalMass]
 
+    ### SQL Insertion Blocks ###
+    # In the future SQLalchemy can be used to create wrapper methods to generate these
+    #  kinds of commands but for now it is good for me to relearn
+    # http://initd.org/psycopg/docs/usage.html
+
+    compoundSQL = "INSERT INTO compound (notation) VALUES (%s)"
+    compound_infoSQL = """INSERT INTO compound_info (compound_id, name, author, dateCreated, theoretical_mass, scientific_mass, time_passed)
+                    VALUES (%s,%s,%s,%s,%f,%f,%s) """
+    storageSQL = "INSERT INTO storage (compound_id, file_loc) VALUES (%s, %s) "
+    atom_infoSQL = "INSERT INTO atom_info (compound_id, molecule_id, atom_type, x_coord, y_coord, z_coord) VALUES (%s,%s,%s,%f,%f,%f)"
+
     atomic_mass = {
         "H": 1.0079, "He": 4.0026, "Li": 6.941, "Be": 9.0122,
         "B": 10.811, "C": 12.011, "N": 14.007, "O": 15.999, "F": 18.998,
@@ -74,8 +87,9 @@ class Parser:
     }
 
 if __name__ == "__main__":
-    p = Parser()
-    root = os.path.join(os.path.dirname(__file__),"exFiles/")
-    for f in os.listdir(root):
-        print (str(f))
-        p.parseFile(os.path.join(root,f))
+    print(connectDB())
+    #p = Parser()
+    #root = os.path.join(os.path.dirname(__file__),"exFiles/")
+    #for f in os.listdir(root):
+    #    print (str(f))
+    #    p.parseFile(os.path.join(root,f))
