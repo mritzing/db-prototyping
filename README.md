@@ -1,9 +1,8 @@
-Recommended IDEs for python dev: VSCode, IntelliJ
+Recommended IDEs for python dev: VSCode or IntelliJ
 
 python 3.6, postgresql 10
 
 Python used for parsing, flask used for webpage, postgresql used for database
-
 
 ### TODO List
 -[X] Create code skeleton structure
@@ -23,7 +22,7 @@ Python used for parsing, flask used for webpage, postgresql used for database
 -[ ] Setup scripts
 
 Additional Resources:
- 
+
  SQL Tutorial:
  http://sqlzoo.net/
 
@@ -35,3 +34,11 @@ Additional Resources:
 
  Ansible roles:
  https://github.com/pyslackers/ansible-role-postgres
+
+
+Biopython used for parsing http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc149
+sudo cmake -DRUN_SWIG=ON -DPYTHON_BINDINGS=ON -DPYTHON_PREFIX=/usr/bin/python3.6 -DPYTHON_INCLUDE_DIR=/usr/include/python3.6m -DPYTHON_EXECUTABLE=/usr/bin/python3.6 -DPYTHON_LIBRARY='/usr/lib/x86_64-linux-gnu/libpython3.6m.so' ..
+Chemdoodle for 3d viewer - https://web.chemdoodle.com/installation/download/
+    -is a webgl app
+
+** All this code will be cleaned up later, most of the mess rn comes from figuring out which libraries to use

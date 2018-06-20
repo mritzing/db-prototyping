@@ -1,6 +1,7 @@
 from collections import Counter
 from database.dbTools import connectDB
 import os
+import Bio as bio
 class Parser:
 
     def __init__(self):
@@ -8,11 +9,13 @@ class Parser:
  #      conn = connectDB()
 
     def parseFile(self, filename):
+        #insert compound value
         with open(filename, 'r') as pdbFile:
             for line in pdbFile.readlines():
                 if "HETAT" in line.split()[0] or "ATOM" in line.split()[0]:
                     self.parseLine(line)
         print(self.molMass())
+        #fix compound value notation
         self.totals.clear()
 
     # Ex lines:
@@ -87,9 +90,8 @@ class Parser:
     }
 
 if __name__ == "__main__":
-    print(connectDB())
-    #p = Parser()
-    #root = os.path.join(os.path.dirname(__file__),"exFiles/")
-    #for f in os.listdir(root):
-    #    print (str(f))
-    #    p.parseFile(os.path.join(root,f))
+    p = Parser()
+    root = os.path.join(os.path.dirname(__file__),"exFiles/")
+    for f in os.listdir(root):
+        print (str(f))
+        p.parseFile(os.path.join(root,f))
