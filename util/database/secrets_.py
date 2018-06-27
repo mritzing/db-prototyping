@@ -1,4 +1,4 @@
 pgname = "postgres"
 pguser = "postgres"
 pghost = "localhost"
-pgpass = "password"
+pgpass = "qwe123"

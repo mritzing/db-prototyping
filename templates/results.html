@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+<meta http-equiv="X-UA-Compatible" content="chrome=1">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ChemDoodleWeb.css')}}" type="text/css">
+<script type="text/javascript" src="{{ url_for('static', filename='js/ChemDoodleWeb.js')}}"></script>
+</head>
+<script>
+    // the url is the local path to the chemical file
+    ChemDoodle.io.file.content("{{ url_for('static', filename='uploads/test.pdb')}}", function(fileContent){
+    var pdbStructure = ChemDoodle.readPDB(fileContent); 
+    // declare our 3D component
+    var display3d = new ChemDoodle.TransformCanvas3D('display3d', 400, 400);
+    // set the 3D representation for ligand atoms
+    display3d.specs.set3DRepresentation('van der Waals Spheres');
+    // set the 3D representation for the protein and nucleic acid atoms and set them to be displayed
+    // first, create a new VisualSpecifications object
+    var newSpecs = new ChemDoodle.structures.VisualSpecifications();
+    // display these atoms in wireframe
+    newSpecs.set3DRepresentation('Wireframe');
+    // set the residueSpecs variable for the Canvas3D to bind it
+    display3d.residueSpecs = newSpecs;
+    // set the original specifications to display the protein and nucleic acid atoms and bonds
+    display3d.specs.macro_displayAtoms = true;
+    display3d.specs.macro_displayBonds = true;
+    // load the molecule into the Canvas
+    display3d.loadMolecule(pdbStructure);
+    });
+</script>  
+
+</html>

@@ -1,11 +1,11 @@
-import secrets_
 from psycopg2 import connect
 
 
 # Returns connection to database, this should only get passed to search input and search functions
 def connectDB():
     try:
-        con = connect(dbname=secrets_.pgname, user=secrets_.pguser, host=secrets_.pghost, password=secrets_.pgpass)
+        #con = connect(dbname=secrets_.pgname, user=secrets_.pguser, host=secrets_.pghost, password=secrets_.pgpass)
+        con = connect(dbname="postgres", user="postgres", host="localhost", password="qwe123")
     except() as e:
         print(e)
     return con
@@ -47,7 +47,7 @@ CREATE TABLE atom_info (
 	x_coord float8,
 	y_coord float8,
 	z_coord float8,
-	PRIMARY KEY(compound_id)
+	FOREIGN KEY(compound_id) REFERENCES compound(compound_id)
 )
       """)
     try:
@@ -72,5 +72,4 @@ CREATE TABLE atom_info (
 ### Main ###
 if __name__ == "__main__":
     print(connectDB())
-
-    #populateDB(connectDB())
+    populateDB(connectDB())

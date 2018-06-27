@@ -1,22 +1,43 @@
 from collections import Counter
 from database.dbTools import connectDB
 import os
-import Bio as bio
 class Parser:
 
     def __init__(self):
         self.totals = Counter()
- #      conn = connectDB()
+        self.conn = connectDB()
+        self.cur = self.conn.cursor()
 
+    ### SQL Insertion Blocks ###
+    # In the future SQLalchemy can be used to create wrapper methods to generate these
+    #  kinds of commands but for now it is good for me to relearn
+    # http://initd.org/psycopg/docs/usage.html
 
+    compoundSQL = "INSERT INTO compound (notation) VALUES(%s) RETURNING compound_id;"
+    compound_infoSQL = """INSERT INTO compound_info (compound_id, name, author, dateCreated, theoretical_mass, scientific_mass, time_passed)
+                    VALUES(%s,%s,%s,%s,%s,%s,%s) """
+    storageSQL = "INSERT INTO storage (compound_id, file_loc) VALUES(%s, %s) "
+    atom_infoSQL = "INSERT INTO atom_info (compound_id, molecule_id, atom_type, x_coord, y_coord, z_coord) VALUES(%s,%s,%s,%s,%s,%s)"
+    updatecompound= "UPDATE compound SET notation = %s WHERE compound_id = %s"
     def parseFile(self, filename):
         #insert compound value
+        self.cur.execute(self.compoundSQL, (None,))
+        idNum = self.cur.fetchone()[0]
+        atomList = []
         with open(filename, 'r') as pdbFile:
             for line in pdbFile.readlines():
                 if "HETAT" in line.split()[0] or "ATOM" in line.split()[0]:
-                    self.parseLine(line)
-        print(self.molMass())
+
+                    lineArr = line.split()
+                    atomList.append([idNum, lineArr[1], lineArr[-1], lineArr[6], lineArr[6], lineArr[8],])
+                    #counts occurences
+                    self.totals[lineArr[-1]] += 1
+        
         #fix compound value notation
+        self.cur.executemany(self.atom_infoSQL, atomList)
+        self.cur.execute(self.updatecompound,(self.molMass()[0],idNum))
+        self.conn.commit()
+        atomList.clear()
         self.totals.clear()
 
     # Ex lines:
@@ -24,23 +45,6 @@ class Parser:
     # HETATM    4  OAT DRG     1      20.090   7.560   1.340  1.00 20.00           O
     # Need more info on how to properly parse these
     # pbd reference: https://zhanglab.ccmb.med.umich.edu/COFACTOR/pdb_atom_format.html
-
-
-    def parseLine(self, line):
-        #counts occurences of individual elements
-        lineArr = line.split()
-        self.totals[lineArr[-1]] += 1
-        #add elements to postgresql
-        #lineArr[1] = atom_id
-        #lineArr[2] = atom
-        #lineArr[3] = residue name
-        #lineArr[4] = chain_id
-        #lineArr[5] = xCoord
-        #lineArr[6] = yCoord
-        #lineArr[7] = zCoord
-        #lineArr[8] = Occupancy
-        #lineArr[9] = temp
-        #lineArr[10] = element, (?charge sometimes)
 
     def molMass(self):
         totalMass = 0
@@ -52,16 +56,6 @@ class Parser:
             notation = notation + element + str(self.totals[element])
         return [notation,totalMass]
 
-    ### SQL Insertion Blocks ###
-    # In the future SQLalchemy can be used to create wrapper methods to generate these
-    #  kinds of commands but for now it is good for me to relearn
-    # http://initd.org/psycopg/docs/usage.html
-
-    compoundSQL = "INSERT INTO compound (notation) VALUES (%s)"
-    compound_infoSQL = """INSERT INTO compound_info (compound_id, name, author, dateCreated, theoretical_mass, scientific_mass, time_passed)
-                    VALUES (%s,%s,%s,%s,%f,%f,%s) """
-    storageSQL = "INSERT INTO storage (compound_id, file_loc) VALUES (%s, %s) "
-    atom_infoSQL = "INSERT INTO atom_info (compound_id, molecule_id, atom_type, x_coord, y_coord, z_coord) VALUES (%s,%s,%s,%f,%f,%f)"
 
     atomic_mass = {
         "H": 1.0079, "He": 4.0026, "Li": 6.941, "Be": 9.0122,
