@@ -41,4 +41,13 @@ sudo cmake -DRUN_SWIG=ON -DPYTHON_BINDINGS=ON -DPYTHON_PREFIX=/usr/bin/python3.6
 Chemdoodle for 3d viewer - https://web.chemdoodle.com/installation/download/
     -is a webgl app
 
+Web page structure:
+    Search page
+        Upload Button -> chose file -> go to cont page
+    Results Page: Displays Listing of results
+        Results subpage (individual result with 3d viewer, can check speed of viewer see if images can be included on main results)
+        Download
+    Uploads Cont page (hit this after processing file, extra info filled out here)
+
+File not directly uploaded instead contents read and new file is created at destination 
 ** All this code will be cleaned up later, most of the mess rn comes from figuring out which libraries to use

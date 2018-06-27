@@ -8,6 +8,7 @@ class Parser:
         self.totals = Counter()
  #      conn = connectDB()
 
+
     def parseFile(self, filename):
         #insert compound value
         with open(filename, 'r') as pdbFile:
