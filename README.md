@@ -9,13 +9,16 @@ Python used for parsing, flask used for webpage, postgresql used for database
 
 -[X] PDB Parsing
 
--[ ] Database tools
-
--[ ] CLI for testing
+-[X] Database tools
 
 -[ ] Logging
 
--[ ] Flask page
+-[X] Flask page
+    -[X] File upload
+    -[X] 3d Viewer
+    -[ ] Upload form
+    -[ ] Search page
+    -[ ] Results page
 
 -[ ] Search functionality
 

@@ -19,7 +19,6 @@ CREATE TABLE compound (
 	compound_id SERIAL PRIMARY KEY,
 	notation TEXT
 )
-
         """,
         """ CREATE TABLE compound_info (
 	compound_id SERIAL NOT NULL,

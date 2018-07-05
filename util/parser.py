@@ -1,6 +1,7 @@
 from collections import Counter
 from database.dbTools import connectDB
 import os
+import datetime
 class Parser:
 
     def __init__(self):
@@ -19,23 +20,29 @@ class Parser:
     storageSQL = "INSERT INTO storage (compound_id, file_loc) VALUES(%s, %s) "
     atom_infoSQL = "INSERT INTO atom_info (compound_id, molecule_id, atom_type, x_coord, y_coord, z_coord) VALUES(%s,%s,%s,%s,%s,%s)"
     updatecompound= "UPDATE compound SET notation = %s WHERE compound_id = %s"
+    
     def parseFile(self, filename):
         #insert compound value
         self.cur.execute(self.compoundSQL, (None,))
         idNum = self.cur.fetchone()[0]
         atomList = []
+        compoundName = None
         with open(filename, 'r') as pdbFile:
             for line in pdbFile.readlines():
-                if "HETAT" in line.split()[0] or "ATOM" in line.split()[0]:
-
-                    lineArr = line.split()
-                    atomList.append([idNum, lineArr[1], lineArr[-1], lineArr[6], lineArr[6], lineArr[8],])
+                lineArr = line.split()
+                if lineArr[0] is "HETNAM":
+                    compoundName = lineArr[-1]
+                if "HETAT" in lineArr[0] or "ATOM" in lineArr[0]:
+                    atomList.append([idNum, lineArr[1], lineArr[-1], lineArr[6], lineArr[7], lineArr[8],])
                     #counts occurences
                     self.totals[lineArr[-1]] += 1
         
         #fix compound value notation
-        self.cur.executemany(self.atom_infoSQL, atomList)
-        self.cur.execute(self.updatecompound,(self.molMass()[0],idNum))
+        totalObj = self.molMass()
+        self.cur.executemany(self.atom_infoSQL, ato2mList)
+        self.cur.execute(self.updatecompound,(totalObj[0],idNum))
+        self.cur.execute(self.storageSQL,(idNum,filename,))
+        self.cur.execute(self.compound_infoSQL,(idNum, compoundName, "PDBDownload", datetime.datetime.now(),totalObj[1], None, None,))
         self.conn.commit()
         atomList.clear()
         self.totals.clear()
