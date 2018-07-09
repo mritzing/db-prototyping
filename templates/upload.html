@@ -1,0 +1,18 @@
+{% block uploadBlock %}
+<html lang="en">
+    <body>
+        <div class="container">
+            <h3 style="display: inline;">Upload File: </h3>
+            <form style="display: inline;" method="POST" action="/upload" enctype="multipart/form-data">
+            <div style="display: inline;" class ="form-group">
+                <input type="file" name="inputFile">
+            </div> 
+            <button style="display: inline;" type="submit" class="btn btn-default">Submit</button>
+            </form>
+        </div>
+        <!--JS Resources-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    </body>
+</html>
+{% endblock %}

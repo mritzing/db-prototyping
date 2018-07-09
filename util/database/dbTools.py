@@ -5,10 +5,26 @@ from psycopg2 import connect
 def connectDB():
     try:
         #con = connect(dbname=secrets_.pgname, user=secrets_.pguser, host=secrets_.pghost, password=secrets_.pgpass)
-        con = connect(dbname="postgres", user="postgres", host="localhost", password="qwe123")
+        con = connect(dbname="test_db", user="test_user", host="localhost", password="password")
     except() as e:
         print(e)
-    return con
+    return con  
+
+# want to make this a generator:  fetchone/many + yield 
+def search(val, choice):
+    con = connectDB()
+    searchQL = 'SELECT * from compound_info WHERE %s LIKE %s'
+    try:
+        cur = conn.cursor()
+        cursor.execute(searchQL, (choice, val,))
+        
+        cur.close()
+    except() as e:
+        print(e)
+    finally:
+        if conn is not None:
+            conn.close()
+
 
 ## creation of DB through sql language
 def populateDB(conn):

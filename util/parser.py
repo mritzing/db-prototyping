@@ -22,7 +22,7 @@ class Parser:
     updatecompound= "UPDATE compound SET notation = %s WHERE compound_id = %s"
     
     def parseFile(self, filename):
-        #insert compound value
+        #insert compound value  
         self.cur.execute(self.compoundSQL, (None,))
         idNum = self.cur.fetchone()[0]
         atomList = []
