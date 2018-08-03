@@ -4,8 +4,8 @@ from psycopg2 import connect
 # Returns connection to database, this should only get passed to search input and search functions
 def connectDB():
     try:
+        con = connect(dbname="test_db", user="postgres", host="localhost", password="password")
         #con = connect(dbname=secrets_.pgname, user=secrets_.pguser, host=secrets_.pghost, password=secrets_.pgpass)
-        con = connect(dbname="test_db", user="test_user", host="localhost", password="password")
     except() as e:
         print(e)
     return con  
@@ -30,11 +30,11 @@ def search(val, choice):
 # need a junction table to represent this  : https://gist.github.com/anonymous/79c2eed2a634777b16ff
 def populateDB(conn):
     """ create tables in the PostgreSQL database"""
-    commands = (
+    commands = (    
         """
 CREATE TABLE compound (
 	compound_id SERIAL PRIMARY KEY,
-	notation TEXT,
+	notation TEXT
 )
         """,
         """ CREATE TABLE compound_info (
@@ -70,14 +70,14 @@ CREATE TABLE interactions(
     ligand_id SERIAL PRIMARY KEY, 
     ligand_name TEXT,
     dateCreated DATE,
-	theoretical_mass float8,
+	theoretical_mass float8
 )
 """,""" 
 CREATE TABLE compound_interactions_junct(
     compound_id SERIAL, 
     ligand_id SERIAL,
-    FOREIGN KEY(compound_id) REFERENCES compound(compound_id)
-	FOREIGN KEY(ligand_id) REFERENCES compound(ligand_id)
+    FOREIGN KEY(compound_id) REFERENCES compound(compound_id),
+	FOREIGN KEY(ligand_id) REFERENCES interactions(ligand_id)
 )"""
 )
     try:

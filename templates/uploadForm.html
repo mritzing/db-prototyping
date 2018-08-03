@@ -9,7 +9,7 @@
     </head>
     <body> Input file: {{fileName}}
       <br/>
-      Smiles string from file: {{smilesStr}}
+      Notation from file: {{smilesStr}}
       <br/>
       Molecular mass from file: {{massStr}}
        </body>
@@ -31,8 +31,8 @@
         var transformBallAndStick = new ChemDoodle.TransformCanvas3D('transformBallAndStick', 500, 500);
         transformBallAndStick.specs.set3DRepresentation('Ball and Stick');
         //transformBallAndStick.specs.backgroundColor = 'white';
-        
-        ChemDoodle.io.file.content("{{ url_for('static', filename='uploads/test.pdb')}}", function(fileContent){
+        ChemDoodle.io.file.content("{{ url_for('static', filename='uploads/3Q0D.pdb')}}", function(fileContent){
+        //ChemDoodle.io.file.content("{{ url_for('static', filename='uploads/test.pdb')}}", function(fileContent){
         var pdbStructure = ChemDoodle.readPDB(fileContent); 
         transformBallAndStick.loadMolecule(pdbStructure);
         

@@ -3,14 +3,13 @@ from .database.dbTools import connectDB
 import os
 import io
 import datetime
-import openbabel
 class Parser:
 
     def __init__(self):
         self.totals = Counter()
         self.conn = connectDB()
         self.cur = self.conn.cursor()
-
+        self.uploadDir = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'static', 'uploads'))
     ### SQL Insertion Blocks ###
     # In the future SQLalchemy can be used to create wrapper methods to generate these
     #  kinds of commands but for now it is good for me to relearn
@@ -25,19 +24,20 @@ class Parser:
     
 
 
-    def parseFile(self, filename):
+    def parseFile(self, contents, filename):
         #insert compound value  
-        #self.cur.execute(self.compoundSQL, (None,))
+        self.cur.execute(self.compoundSQL, (None,))
         idNum = self.cur.fetchone()[0]
-        idNum = 0
         atomList = []
         compoundName = None
-        ifStream = io.StringIO(filename.decode('utf-8'))
+        ifStream = io.StringIO(contents.decode('utf-8'))
+        writeFile = getattr(filename, 'filename', None)
         #with open(filename, 'r') as pdbFile:
             #for line in pdbFile.readlines():
+        file = open(os.path.join(self.uploadDir, writeFile), 'w')
 
         for line in ifStream.readlines():
-            print (line)
+            file.write(line)
             lineArr = line.split()
             if lineArr[0] is "TERM":
                 #breakout into ligand
@@ -49,16 +49,17 @@ class Parser:
                 #counts occurences
                 self.totals[lineArr[-1]] += 1
     
+        file.close()
         #fix compound value notation
         totalObj = self.molMass()
-        self.cur.executemany(self.atom_infoSQL, ato2mList)
         self.cur.execute(self.updatecompound,(totalObj[0],idNum))
-        self.cur.execute(self.storageSQL,(idNum,filename,))
+        self.cur.executemany(self.atom_infoSQL, atomList)
+        self.cur.execute(self.storageSQL,(idNum,writeFile,))
         self.cur.execute(self.compound_infoSQL,(idNum, compoundName, "PDBDownload", datetime.datetime.now(),totalObj[1], None, None,))
         self.conn.commit()
         atomList.clear()
         self.totals.clear()
-        return totalObj;
+        return totalObj
 
     # Ex lines:
     # HETATM    3  NAQ DRG     1      18.720   7.260   1.360  1.00 20.00           N
@@ -68,6 +69,7 @@ class Parser:
 
     def returnAllRes(self):
         self.cur.execute("SELECT * FROM compound_info")
+        print("executing fetch")
         return self.cur.fetchall();
 
     def molMass(self):
@@ -82,28 +84,28 @@ class Parser:
 
 
     atomic_mass = {
-        "H": 1.0079, "He": 4.0026, "Li": 6.941, "Be": 9.0122,
+        "H": 1.0079, "HE": 4.0026, "LI": 6.941, "BE": 9.0122,
         "B": 10.811, "C": 12.011, "N": 14.007, "O": 15.999, "F": 18.998,
-        "Ne": 20.180, "Na": 22.990, "Mg": 24.305, "Al": 26.982,
-        "Si": 28.086, "P": 30.974, "S": 32.065, "Cl": 35.453,
-        "Ar": 39.948, "K": 39.098, "Ca": 40.078, "Sc": 44.956,
-        "Ti": 47.867, "V": 50.942, "Cr": 51.996, "Mn": 54.938,
-        "Fe": 55.845, "Co": 58.933, "Ni": 58.693, "Cu": 63.546,
-        "Zn": 65.39, "Ga": 69.723, "Ge": 72.61, "As": 74.922,
-        "Se":78.96, "Br": 79.904, "Kr": 83.80, "Rb": 85.468, "Sr": 87.62,
-        "Y": 88.906, "Zr": 91.224, "Nb": 92.906, "Mo": 95.94,
-        "Tc": 97.61, "Ru": 101.07, "Rh": 102.91, "Pd": 106.42,
-        "Ag": 107.87, "Cd": 112.41, "In": 114.82, "Sn": 118.71,
-        "Sb": 121.76, "Te": 127.60, "I": 126.90, "Xe": 131.29,
-        "Cs": 132.91, "Ba": 137.33, "La": 138.91, "Ce": 140.12,
-        "Pr": 140.91, "Nd": 144.24, "Pm": 145.0, "Sm": 150.36, "Eu": 151.96,
-        "Gd": 157.25, "Tb": 158.93, "Dy": 162.50, "Ho": 164.93, "Er": 167.26,
-        "Tm": 168.93, "Yb": 173.04, "Lu": 174.97, "Hf": 178.49, "Ta": 180.95,
-        "W": 183.84, "Re": 186.21, "Os": 190.23, "Ir": 192.22, "Pt": 196.08,
-        "Au": 196.08, "Hg": 200.59, "Tl": 204.38, "Pb": 207.2, "Bi": 208.98,
-        "Po": 209.0, "At": 210.0, "Rn": 222.0, "Fr": 223.0, "Ra": 226.0,
-        "Ac": 227.0, "Th": 232.04, "Pa": 231.04, "U": 238.03, "Np": 237.0,
-        "Pu": 244.0, "Am": 243.0, "Cm": 247.0, "Bk": 247.0, "Cf": 251.0, "Es": 252.0,
-        "Fm": 257.0, "Md": 258.0, "No": 259.0, "Lr": 262.0, "Rf": 261.0, "Db": 262.0,
-        "Sg": 266.0, "Bh": 264.0, "Hs": 269.0, "Mt": 268.0
+        "NE": 20.180, "NA": 22.990, "MG": 24.305, "AL": 26.982,
+        "SI": 28.086, "P": 30.974, "S": 32.065, "CL": 35.453,
+        "AR": 39.948, "K": 39.098, "CA": 40.078, "SC": 44.956,
+        "TI": 47.867, "V": 50.942, "CR": 51.996, "MN": 54.938,
+        "FE": 55.845, "CO": 58.933, "NI": 58.693, "CU": 63.546,
+        "ZN": 65.39, "GA": 69.723, "GE": 72.61, "AS": 74.922,
+        "SE":78.96, "BR": 79.904, "KR": 83.80, "RB": 85.468, "SR": 87.62,
+        "Y": 88.906, "ZR": 91.224, "NB": 92.906, "MO": 95.94,
+        "TC": 97.61, "RU": 101.07, "RH": 102.91, "PD": 106.42,
+        "AG": 107.87, "CD": 112.41, "IN": 114.82, "SN": 118.71,
+        "SB": 121.76, "TE": 127.60, "I": 126.90, "XE": 131.29,
+        "CS": 132.91, "BA": 137.33, "LA": 138.91, "CE": 140.12,
+        "PR": 140.91, "ND": 144.24, "PM": 145.0, "SM": 150.36, "EU": 151.96,
+        "GD": 157.25, "TB": 158.93, "DY": 162.50, "HO": 164.93, "ER": 167.26,
+        "TM": 168.93, "YB": 173.04, "LU": 174.97, "HF": 178.49, "TA": 180.95,
+        "W": 183.84, "RE": 186.21, "OS": 190.23, "IR": 192.22, "PT": 196.08,
+        "AU": 196.08, "HG": 200.59, "TL": 204.38, "PB": 207.2, "BI": 208.98,
+        "PO": 209.0, "AT": 210.0, "RN": 222.0, "FR": 223.0, "RA": 226.0,
+        "AC": 227.0, "TH": 232.04, "PA": 231.04, "U": 238.03, "NP": 237.0,
+        "PU": 244.0, "AM": 243.0, "CM": 247.0, "BK": 247.0, "CF": 251.0, "ES": 252.0,
+        "FM": 257.0, "MD": 258.0, "NO": 259.0, "LR": 262.0, "RF": 261.0, "DB": 262.0,
+        "SG": 266.0, "BH": 264.0, "HS": 269.0, "MT": 268.0
     }

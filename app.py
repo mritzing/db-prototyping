@@ -42,11 +42,9 @@ def index():
 def upload():
     file = request.files['inputFile'] 
     addForm = additionalInfoForm(request.form)
-    p = Parser();
-
-    item = p.parseFile(file.read());
-
-    return (render_template('uploadForm.html', form = addForm, fileName = file, smilesStr= item[0], massStr = item[1]))
+    p = Parser()
+    item = p.parseFile(file.read(), file)
+    return (render_template('uploadForm.html', form = addForm, fileName = file, smilesStr= item[0], massStr = item[1], filename = getattr(file, 'filename', None)))
 
 @app.route('/test1')
 def test1():
@@ -59,21 +57,20 @@ def search_results(search):
     results = []
     search_string = search.data['search']
     if search.data['search'] == '':
-        print("s")
-        print("empty")
-        return(search.data['search'])
         p = Parser()
         results = p.returnAllRes()
         print(results)
-        return (results)
+        return redirect('/')
     if not results:
         print("not found")
         flash('No results found!')
         return redirect('/')
     else:
         # display results
-        print("here")
-        return render_template(search.data['search'])
+        p = Parser()
+        results = p.returnAllRes()
+        print(results)
+        return redirect('/')
 
 if __name__ == '__main__':
     app.debug = True
