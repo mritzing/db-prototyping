@@ -1,4 +1,4 @@
-{% block resultsBlock %}
+
 <html lang="en">
     <head>
 <meta http-equiv="X-UA-Compatible" content="chrome=1">
@@ -6,6 +6,10 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/ChemDoodleWeb.js')}}"></script>
 
 </head>
+<body>
+{%include "base.html" %}
+{%block header %}{%endblock %}
+
 <script>
     var transformBallAndStick = new ChemDoodle.TransformCanvas3D('transformBallAndStick', 500, 500);
     transformBallAndStick.specs.set3DRepresentation('Ball and Stick');
@@ -17,6 +21,6 @@
     
     });
 </script>  
+</body>
 
 </html>
-{% endblock %}

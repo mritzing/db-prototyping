@@ -1,0 +1,43 @@
+<html lang="en">
+        <head>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ChemDoodleWeb.css')}}" type="text/css">
+    <script type="text/javascript" src="{{ url_for('static', filename='js/ChemDoodleWeb.js')}}"></script>
+
+    </head>
+    <body> Input file: {{fileName}}
+      <br/>
+      Smiles string from file: {{smilesStr}}
+      <br/>
+      Molecular mass from file: {{massStr}}
+       </body>
+    <body>
+{% from "_formhelpers.html" import render_field_form%}
+<form method=post>
+  <dl>
+    {{ render_field_form(form.notation) }}
+    {{ render_field_form(form.author) }}
+    {{ render_field_form(form.lab) }}
+    {{ render_field_form(form.sci_mass) }}
+    {{ render_field_form(form.solution) }}
+    {{ render_field_form(form.forceFieldSelect) }}
+    {{ render_field_form(form.publications) }}
+    
+  </dl>
+  <p><input type=submit value=Submit>
+    <script>
+        var transformBallAndStick = new ChemDoodle.TransformCanvas3D('transformBallAndStick', 500, 500);
+        transformBallAndStick.specs.set3DRepresentation('Ball and Stick');
+        //transformBallAndStick.specs.backgroundColor = 'white';
+        
+        ChemDoodle.io.file.content("{{ url_for('static', filename='uploads/test.pdb')}}", function(fileContent){
+        var pdbStructure = ChemDoodle.readPDB(fileContent); 
+        transformBallAndStick.loadMolecule(pdbStructure);
+        
+        });
+    </script>
+</form>
+</body>
+</html>

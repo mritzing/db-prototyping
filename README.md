@@ -5,24 +5,27 @@ python 3.6, postgresql 10
 Python used for parsing, flask used for webpage, postgresql used for database
 
 ### TODO List
--[X] Create code skeleton structure
+    -[X] Create code skeleton structure
 
--[X] PDB Parsing
+    -[X] PDB Parsing
 
--[X] Database tools
+    -[X] Database tools
 
--[ ] Logging
+    -[X] Logging
 
--[X] Flask page
-    -[X] File upload
-    -[X] 3d Viewer
-    -[ ] Upload form
-    -[ ] Search page
-    -[ ] Results page
+    -[X] Flask page
+        -[X] File upload
+            -[X] Upload form
+        -[X] 3d Viewer
+        -[X] Search page
+        -[ ] Results page
+        -[ ] Page routing
+        
+    -[X] Search functionality
 
--[ ] Search functionality
-
--[ ] Setup scripts
+    -[In prog] Setup scripts
+        -[] Include database replication(https://www.howtoforge.com/tutorial/how-to-set-up-master-slave-replication-for-postgresql-96-on-ubuntu-1604/)
+            https://github.com/rromannissen/ansible-role-postgresql-replication
 
 Additional Resources:
 
@@ -54,3 +57,5 @@ Web page structure:
 
 File not directly uploaded instead contents read and new file is created at destination 
 ** All this code will be cleaned up later, most of the mess rn comes from figuring out which libraries to use
+
+

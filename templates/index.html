@@ -1,0 +1,25 @@
+<html lang="en">
+        <head>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ChemDoodleWeb.css')}}" type="text/css">
+    <script type="text/javascript" src="{{ url_for('static', filename='js/ChemDoodleWeb.js')}}"></script>
+    
+    </head>
+    <body>
+    {%include "base.html" %}
+    {%block header %}{%endblock %}
+    
+    <script>
+        var transformBallAndStick = new ChemDoodle.TransformCanvas3D('transformBallAndStick', 500, 500);
+        transformBallAndStick.specs.set3DRepresentation('Ball and Stick');
+        //transformBallAndStick.specs.backgroundColor = 'white';
+        
+        ChemDoodle.io.file.content("{{ url_for('static', filename='uploads/test.pdb')}}", function(fileContent){
+        var pdbStructure = ChemDoodle.readPDB(fileContent); 
+        transformBallAndStick.loadMolecule(pdbStructure);
+        
+        });
+    </script>  
+    </body>
+    
+</html>

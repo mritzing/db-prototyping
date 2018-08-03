@@ -1,0 +1,35 @@
+Vagrant.configure("2") do |config| 
+	config.vm.define "pgmaster" do |pgmaster|
+	    pgmaster.vm.box = "bento/ubuntu-18.04"
+	    pgmaster.vm.hostname = 'pgmaster'
+	    pgmaster.vm.network :private_network, ip: "192.168.0.101"
+	  	if Vagrant::Util::Platform.windows?
+	  		pgmaster.vm.provision :guest_ansible do |ansible|
+	      		ansible.playbook = "ansible_playbook.yml"
+	    	end
+	  	else 
+	  		pgmaster.vm.provision :ansible do |ansible|
+	      		ansible.playbook = "ansible_playbook.yml"
+	    	end
+	    end
+	end
+
+  	config.vm.define "pgslave" do |pgslave|
+	    pgslave.vm.box = "bento/ubuntu-18.04"
+	    pgslave.vm.hostname = 'pgslave'
+	    pgslave.vm.network :private_network, ip: "192.168.0.102"
+	  	if Vagrant::Util::Platform.windows?
+	  		pgslave.vm.provision :guest_ansible do |ansible|
+	      		ansible.playbook = "ansible_playbook.yml"
+	    	end
+	  	else 
+	  		pgslave.vm.provision :ansible do |ansible|
+	      		ansible.playbook = "ansible_playbook.yml"
+	    	end
+	    end
+	    pgslave.vm.provision "shell" do |s|
+		    s.inline = "sudo -u postgres -i bash slaveRepScript.sh $1"
+	    	s.args   = ["192.168.0.102"]
+		end
+	end
+end

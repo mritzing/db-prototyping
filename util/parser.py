@@ -1,7 +1,9 @@
 from collections import Counter
-from database.dbTools import connectDB
+from .database.dbTools import connectDB
 import os
+import io
 import datetime
+import openbabel
 class Parser:
 
     def __init__(self):
@@ -21,22 +23,32 @@ class Parser:
     atom_infoSQL = "INSERT INTO atom_info (compound_id, molecule_id, atom_type, x_coord, y_coord, z_coord) VALUES(%s,%s,%s,%s,%s,%s)"
     updatecompound= "UPDATE compound SET notation = %s WHERE compound_id = %s"
     
+
+
     def parseFile(self, filename):
         #insert compound value  
-        self.cur.execute(self.compoundSQL, (None,))
+        #self.cur.execute(self.compoundSQL, (None,))
         idNum = self.cur.fetchone()[0]
+        idNum = 0
         atomList = []
         compoundName = None
-        with open(filename, 'r') as pdbFile:
-            for line in pdbFile.readlines():
-                lineArr = line.split()
-                if lineArr[0] is "HETNAM":
-                    compoundName = lineArr[-1]
-                if "HETAT" in lineArr[0] or "ATOM" in lineArr[0]:
-                    atomList.append([idNum, lineArr[1], lineArr[-1], lineArr[6], lineArr[7], lineArr[8],])
-                    #counts occurences
-                    self.totals[lineArr[-1]] += 1
-        
+        ifStream = io.StringIO(filename.decode('utf-8'))
+        #with open(filename, 'r') as pdbFile:
+            #for line in pdbFile.readlines():
+
+        for line in ifStream.readlines():
+            print (line)
+            lineArr = line.split()
+            if lineArr[0] is "TERM":
+                #breakout into ligand
+                print('term')
+            if lineArr[0] is "HETNAM":
+                compoundName = lineArr[-1]
+            if "HETAT" in lineArr[0] or "ATOM" in lineArr[0]:
+                atomList.append([idNum, lineArr[1], lineArr[-1], lineArr[6], lineArr[7], lineArr[8],])
+                #counts occurences
+                self.totals[lineArr[-1]] += 1
+    
         #fix compound value notation
         totalObj = self.molMass()
         self.cur.executemany(self.atom_infoSQL, ato2mList)
@@ -46,12 +58,17 @@ class Parser:
         self.conn.commit()
         atomList.clear()
         self.totals.clear()
+        return totalObj;
 
     # Ex lines:
     # HETATM    3  NAQ DRG     1      18.720   7.260   1.360  1.00 20.00           N
     # HETATM    4  OAT DRG     1      20.090   7.560   1.340  1.00 20.00           O
     # Need more info on how to properly parse these
     # pbd reference: https://zhanglab.ccmb.med.umich.edu/COFACTOR/pdb_atom_format.html
+
+    def returnAllRes(self):
+        self.cur.execute("SELECT * FROM compound_info")
+        return self.cur.fetchall();
 
     def molMass(self):
         totalMass = 0
@@ -90,10 +107,3 @@ class Parser:
         "Fm": 257.0, "Md": 258.0, "No": 259.0, "Lr": 262.0, "Rf": 261.0, "Db": 262.0,
         "Sg": 266.0, "Bh": 264.0, "Hs": 269.0, "Mt": 268.0
     }
-
-if __name__ == "__main__":
-    p = Parser()
-    root = os.path.join(os.path.dirname(__file__),"exFiles/")
-    for f in os.listdir(root):
-        print (str(f))
-        p.parseFile(os.path.join(root,f))

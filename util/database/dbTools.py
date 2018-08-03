@@ -17,7 +17,6 @@ def search(val, choice):
     try:
         cur = conn.cursor()
         cursor.execute(searchQL, (choice, val,))
-        
         cur.close()
     except() as e:
         print(e)
@@ -27,13 +26,15 @@ def search(val, choice):
 
 
 ## creation of DB through sql language
+# interaction between compound and ligand is a many to many relation
+# need a junction table to represent this  : https://gist.github.com/anonymous/79c2eed2a634777b16ff
 def populateDB(conn):
     """ create tables in the PostgreSQL database"""
     commands = (
         """
 CREATE TABLE compound (
 	compound_id SERIAL PRIMARY KEY,
-	notation TEXT
+	notation TEXT,
 )
         """,
         """ CREATE TABLE compound_info (
@@ -64,7 +65,21 @@ CREATE TABLE atom_info (
 	z_coord float8,
 	FOREIGN KEY(compound_id) REFERENCES compound(compound_id)
 )
-      """)
+      ""","""
+CREATE TABLE interactions(
+    ligand_id SERIAL PRIMARY KEY, 
+    ligand_name TEXT,
+    dateCreated DATE,
+	theoretical_mass float8,
+)
+""",""" 
+CREATE TABLE compound_interactions_junct(
+    compound_id SERIAL, 
+    ligand_id SERIAL,
+    FOREIGN KEY(compound_id) REFERENCES compound(compound_id)
+	FOREIGN KEY(ligand_id) REFERENCES compound(ligand_id)
+)"""
+)
     try:
         cur = conn.cursor()
         # create table one by one
