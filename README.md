@@ -1,61 +1,53 @@
-Recommended IDEs for python dev: VSCode or IntelliJ
+###Work points for new hires:
+    DB Schema updating and insertion:
+        DB creation found within dbTools.py
+        Flask forms:
+            Update table schema and insertion statements to add additional metadata, metadata form in uploadForm.html
+        File parsing:
+            Separate molecules based on "ter" string within files, insert these as separate compounds with a many-to-many relation using a junction table 
+            add to file parser.py
+    Systems: 
+        Login process, user rights: 
+            CLI acceptable, no need to make user management page
+            Acct creation proc: 
+                Google form -> Admin approval -> acct creation -> email pass -> reset pass on login
+        Build Tools: 
+            Shell script (oneliner) to complete database replication ansible book
+            Add python install files
+    Front End: 
+        Create clean looking search results page, can use http://zinc.docking.org/ as loose guide
+            Search results currently returned as a json object in the app.py file search_results function
 
-python 3.6, postgresql 10
-
-Python used for parsing, flask used for webpage, postgresql used for database
-
-### TODO List
-    -[X] Create code skeleton structure
-
-    -[X] PDB Parsing
-
-    -[X] Database tools
-
-    -[X] Logging
-
-    -[X] Flask page
-        -[X] File upload
-            -[X] Upload form
-        -[X] 3d Viewer
-        -[X] Search page
-        -[ ] Results page
-        -[ ] Page routing
-        
-    -[X] Search functionality
-
-    -[In prog] Setup scripts
-        -[] Include database replication(https://www.howtoforge.com/tutorial/how-to-set-up-master-slave-replication-for-postgresql-96-on-ubuntu-1604/)
-            https://github.com/rromannissen/ansible-role-postgresql-replication
-
-Additional Resources:
-
- SQL Tutorial:
- http://sqlzoo.net/
-
- SQLAlchemy is a wrapper library for SQL languange, can build useful tools with it in the future, but for now I think it is best for me to refamiliarize myself with SQL (same will be true for others that may get brought on, need to display basic compentency with SQL)
- SQLAlchemy Resources:
- https://github.com/dahlia/awesome-sqlalchemy
- https://github.com/kvesteri/sqlalchemy-utils
- https://github.com/mitsuhiko/flask-sqlalchemy
-
- Ansible roles:
- https://github.com/pyslackers/ansible-role-postgres
+###Tools Used:
+postgresql -> database
+python and flask -> front end
+ansible and vagrant -> build tools
 
 
-Biopython used for parsing http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc149
-sudo cmake -DRUN_SWIG=ON -DPYTHON_BINDINGS=ON -DPYTHON_PREFIX=/usr/bin/python3.6 -DPYTHON_INCLUDE_DIR=/usr/include/python3.6m -DPYTHON_EXECUTABLE=/usr/bin/python3.6 -DPYTHON_LIBRARY='/usr/lib/x86_64-linux-gnu/libpython3.6m.so' ..
-Chemdoodle for 3d viewer - https://web.chemdoodle.com/installation/download/
-    -is a webgl app
+###Folder structure
+build -> build tools
+static -> html resources
+templates -> flask page templates
+util ->
+    parser.py -> parses pdb files
+    database ->
+        dbTools -> database creation, insertion, search functions (psycopg2 used as library)
+    chemdoodle -> 3d molecule viewer
+app.py -> main flask app
 
-Web page structure:
-    Search page
-        Upload Button -> chose file -> go to cont page
-    Results Page: Displays Listing of results
-        Results subpage (individual result with 3d viewer, can check speed of viewer see if images can be included on main results)
-        Download
-    Uploads Cont page (hit this after processing file, extra info filled out here)
+###Additional Resources:
 
-File not directly uploaded instead contents read and new file is created at destination 
-** All this code will be cleaned up later, most of the mess rn comes from figuring out which libraries to use
+SQL Tutorial:
+http://sqlzoo.net/
 
+SQLAlchemy is a wrapper library for SQL languange, can build useful tools with it in the future for now i think it is best to make sure new hires have SQL knowledge first
+SQLAlchemy Resources:
+https://github.com/dahlia/awesome-sqlalchemy
+https://github.com/kvesteri/sqlalchemy-utils
+https://github.com/mitsuhiko/flask-sqlalchemy
 
+Ansible roles:
+https://github.com/pyslackers/ansible-role-postgres
+
+Flask:
+https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world

@@ -26,7 +26,7 @@ class additionalInfoForm(Form):
     #related files (search db again)
 
 app = Flask(__name__)
-app.secret_key = 'ewafwefaejf'
+app.secret_key = 'key'
 
 
 
